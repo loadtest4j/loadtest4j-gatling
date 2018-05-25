@@ -10,7 +10,7 @@ public class GatlingFactory implements DriverFactory {
 
     @Override
     public Set<String> getMandatoryProperties() {
-        return setOf("url");
+        return setOf("duration", "url");
     }
 
     /**
@@ -18,17 +18,20 @@ public class GatlingFactory implements DriverFactory {
      *
      * Mandatory properties:
      *
+     * - `duration`
      * - `url`
      *
-     * TODO Optional properties:
+     * Optional properties:
      *
+     * - `users` (defaults to 1)
      */
     @Override
     public Driver create(Map<String, String> properties) {
         final Duration duration = Duration.ofSeconds(Long.valueOf(properties.get("duration")));
         final String url = properties.get("url");
+        final int users = Integer.valueOf(properties.getOrDefault("users", "1"));
 
-        return new Gatling(url);
+        return new Gatling(duration, url, users);
     }
 
     private static Set<String> setOf(String... values) {
