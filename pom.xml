@@ -36,6 +36,11 @@
             <version>${gatling.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.gatling</groupId>
+            <artifactId>gatling-app</artifactId>
+            <version>${gatling.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
