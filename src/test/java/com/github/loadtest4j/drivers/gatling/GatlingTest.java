@@ -2,18 +2,21 @@ package com.github.loadtest4j.drivers.gatling;
 
 import com.github.loadtest4j.drivers.gatling.junit.IntegrationTest;
 import com.github.loadtest4j.loadtest4j.Driver;
+import com.github.loadtest4j.loadtest4j.DriverRequest;
 import com.github.loadtest4j.loadtest4j.DriverResult;
+import com.github.loadtest4j.loadtest4j.LoadTesterException;
 import com.xebialabs.restito.server.StubServer;
 import org.glassfish.grizzly.http.Method;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +25,8 @@ import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp;
 import static com.xebialabs.restito.semantics.Action.status;
 import static com.xebialabs.restito.semantics.Condition.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @Category(IntegrationTest.class)
 public class GatlingTest {
@@ -63,21 +68,51 @@ public class GatlingTest {
 
         // Then
         assertEquals(0, result.getErrors());
-        assertEquals(0, result.getRequests());
+        assertGreaterThanOrEqualTo(1, result.getRequests());
         // And
-        verifyHttp(httpServer).once(method(Method.POST), uri("/"));
+        verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
     }
 
-    @Ignore
+    @Test
+    public void testRunWithMultipleRequests() {
+        // Given
+        final Driver driver = sut();
+        // And
+        whenHttp(httpServer).match(get("/")).then(status(HttpStatus.OK_200));
+        // And
+        whenHttp(httpServer).match(get("/pets")).then(status(HttpStatus.OK_200));
+
+        // When
+        final List<DriverRequest> requests = Arrays.asList(DriverRequests.get("/"), DriverRequests.get("/pets"));
+        final DriverResult result = driver.run(requests);
+
+        // Then
+        assertGreaterThanOrEqualTo(1, result.getRequests());
+        assertEquals(0, result.getErrors());
+        // And
+        verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
+        // And
+        verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/pets"));
+    }
+
+    @Test
     public void testRunWithNoRequests() {
         // Given
         final Driver driver = sut();
 
         // When
-        final DriverResult result = driver.run(Collections.emptyList());
+        try {
+            driver.run(Collections.emptyList());
 
-        // Then
-        assertEquals(0, result.getErrors());
-        assertEquals(0, result.getRequests());
+            fail("This should not work.");
+        } catch (LoadTesterException e) {
+            // Then
+            assertEquals("No requests were specified for the load test.", e.getMessage());
+        }
+    }
+
+    private static void assertGreaterThanOrEqualTo(long expected, long actual) {
+        final String msg = String.format("Expected %d to be >= %d, but it was not.", actual, expected);
+        assertTrue(msg, actual >= expected);
     }
 }

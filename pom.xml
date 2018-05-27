@@ -40,6 +40,12 @@
             <artifactId>gatling-app</artifactId>
             <version>${gatling.version}</version>
         </dependency>
+        <!-- For the ResultProcessor to work -->
+        <dependency>
+            <groupId>io.gatling</groupId>
+            <artifactId>gatling-charts</artifactId>
+            <version>${gatling.version}</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
