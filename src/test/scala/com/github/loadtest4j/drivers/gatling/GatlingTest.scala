@@ -16,6 +16,7 @@ import com.xebialabs.restito.semantics.Action.status
 import com.xebialabs.restito.semantics.Condition._
 import org.junit.Assert._
 import scala.util.{Try, Failure}
+import scala.concurrent.duration._
 
 class GatlingTest {
 
@@ -33,7 +34,7 @@ class GatlingTest {
 
   private def sut(): Driver = {
     val serviceUrl = "http://localhost:%d".format(httpServer.getPort)
-    new Gatling(5, serviceUrl, 1)
+    new Gatling(3.seconds, serviceUrl, 1)
   }
 
   @Test
