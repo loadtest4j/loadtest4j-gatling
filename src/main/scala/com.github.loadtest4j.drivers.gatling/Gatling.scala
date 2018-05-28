@@ -2,7 +2,7 @@ package com.github.loadtest4j.drivers.gatling
 
 import java.util
 
-import com.github.loadtest4j.loadtest4j.{DriverRequest, DriverResult}
+import com.github.loadtest4j.loadtest4j.{Driver, DriverRequest, DriverResult, LoadTesterException}
 import io.gatling.app.{GatlingFacade, RunResultProcessorFacade}
 import io.gatling.core.Predef._
 import io.gatling.core.config.GatlingConfiguration
@@ -11,19 +11,16 @@ import io.gatling.http.Predef._
 import scala.collection.JavaConverters
 import scala.concurrent.duration._
 
-/**
-  * A private Java-Scala bridge class needed because Gatling does not currently expose a Java API.
-  *
-  * Do not test this class directly in JUnit. Do not expose it publicly. Instead use its Java wrapper {@see Gatling}.
-  */
-class GatlingScalaBridge(durationInSeconds: Long, url: String, users: Int) {
+class Gatling(durationInSeconds: Long, url: String, users: Int) extends Driver {
 
   // We are not in the conventional Gatling test runner, so explicitly load the Gatling config
   implicit val configuration: GatlingConfiguration = GatlingConfiguration.load()
 
   private val baseConfig = http.baseURL(url)
 
-  def run(requests: util.List[DriverRequest]): DriverResult = {
+  override def run(requests: util.List[DriverRequest]): DriverResult = {
+    validateNotEmpty(requests)
+
     val scn = createScenario(requests)
 
     val simulation = new Loadtest4jSimulation
@@ -32,7 +29,6 @@ class GatlingScalaBridge(durationInSeconds: Long, url: String, users: Int) {
       .maxDuration(durationInSeconds.seconds)
       .protocols(baseConfig)
 
-    // FIXME redirect the results directory (if possible)
     runSimulation(simulation)
   }
 
@@ -73,5 +69,9 @@ class GatlingScalaBridge(durationInSeconds: Long, url: String, users: Int) {
 
   private def scalaMap[K, V](javaMap: util.Map[K, V]) = {
     JavaConverters.mapAsScalaMap(javaMap).toMap
+  }
+
+  private def validateNotEmpty[T](requests: util.Collection[T]): Unit = {
+    if (requests.size < 1) throw new LoadTesterException("No requests were specified for the load test.")
   }
 }
