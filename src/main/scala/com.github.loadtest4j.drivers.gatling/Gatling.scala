@@ -32,12 +32,9 @@ package com.github.loadtest4j.drivers.gatling {
     }
 
     private def createScenario(requests: util.List[DriverRequest]) = {
-      var scn = scenario("My load test")
       val gatlingRequests = scalaSeq(requests).map(r => toGatlingRequest(r))
-      for (r <- gatlingRequests) {
-        scn = scn.exec(r)
-      }
-      scn
+      val blankScenario = scenario("My load test")
+      gatlingRequests.foldLeft(blankScenario)((scn, r) => scn.exec(r))
     }
 
     private def toGatlingRequest(request: DriverRequest) = {
