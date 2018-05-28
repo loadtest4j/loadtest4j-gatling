@@ -11,7 +11,7 @@ package com.github.loadtest4j.drivers.gatling {
   import scala.collection.JavaConverters
   import scala.concurrent.duration._
 
-  class Gatling(durationInSeconds: Long, url: String, users: Int) extends Driver {
+  class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int) extends Driver {
 
     // We are not in the conventional Gatling test runner, so explicitly load the Gatling config
     implicit val configuration: GatlingConfiguration = GatlingConfiguration.load()
@@ -25,8 +25,8 @@ package com.github.loadtest4j.drivers.gatling {
 
       val simulation = new Loadtest4jSimulation
 
-      simulation.setUp(scn.inject(atOnceUsers(users)))
-        .maxDuration(durationInSeconds.seconds)
+      simulation.setUp(scn.inject(constantUsersPerSec(usersPerSecond).during(duration)))
+        .maxDuration(duration)
         .protocols(baseConfig)
 
       runSimulation(simulation)
