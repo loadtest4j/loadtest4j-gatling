@@ -54,6 +54,26 @@ class GatlingTest {
   }
 
   @Test
+  def testRunWithElaborateRequest(): Unit = {
+    // Given
+    val driver = sut()
+    // And
+    whenHttp(httpServer)
+      .`match`(post("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"))
+      .`then`(status(HttpStatus.OK_200))
+
+    // When
+    val requests = Collections.singletonList(DriverRequests.post("/", "{}", Map("Accept" -> "application/json", "Content-Type" -> "application/json")))
+    val result = driver.run(requests)
+
+    // Then
+    assertEquals(0, result.getErrors)
+    assertGreaterThanOrEqualTo(1, result.getRequests)
+    // And
+    verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"))
+  }
+
+  @Test
   def testRunWithMultipleRequests(): Unit = {
     // Given
     val driver = sut()

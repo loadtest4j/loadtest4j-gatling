@@ -2,8 +2,9 @@ package com.github.loadtest4j.drivers.gatling {
   import java.util
 
   import com.github.loadtest4j.loadtest4j.{Driver, DriverRequest, DriverResult, LoadTesterException}
-  import io.gatling.app.{GatlingFacade, RunResultProcessorFacade}
+  import io.gatling.{GatlingFacade, RunResultProcessorFacade}
   import io.gatling.core.Predef._
+  import io.gatling.core.body.{Body, CompositeByteArrayBody}
   import io.gatling.core.config.GatlingConfiguration
   import io.gatling.http.Predef._
 
@@ -33,7 +34,7 @@ package com.github.loadtest4j.drivers.gatling {
 
     private def createScenario(requests: util.List[DriverRequest]) = {
       val gatlingRequests = scalaSeq(requests).map(r => toGatlingRequest(r))
-      val blankScenario = scenario("My load test")
+      val blankScenario = scenario("loadtest4j load test")
       gatlingRequests.foldLeft(blankScenario)((scn, r) => scn.exec(r))
     }
 
@@ -42,16 +43,14 @@ package com.github.loadtest4j.drivers.gatling {
       val method = request.getMethod
       val path = request.getPath
 
-      val httpRequestBuilder = http("foo")
+      http("loadtest4j request")
         .httpRequest(method, path)
         .headers(headers)
+        .body(stringBody(request.getBody))
+    }
 
-      val requestBody = request.getBody
-      if (requestBody.isEmpty) {
-        httpRequestBuilder
-      } else {
-        httpRequestBuilder.body(StringBody(requestBody))
-      }
+    private def stringBody(str: String): Body = {
+      CompositeByteArrayBody(str)
     }
 
     private def runSimulation(simulation: Simulation) = {

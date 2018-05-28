@@ -1,16 +1,18 @@
-package io.gatling.app
+package io.gatling
 
 import akka.actor.ActorSystem
 import akka.pattern.ask
+import io.gatling.app.{RunResult, SelectedSimulationClass, Selection}
 import io.gatling.commons.util.ClockSingleton.nowMillis
 import io.gatling.core.CoreComponents
 import io.gatling.core.Predef.Simulation
 import io.gatling.core.action.Exit
 import io.gatling.core.config.GatlingConfiguration
-import io.gatling.core.controller.{Controller, ControllerCommand}
 import io.gatling.core.controller.throttle.Throttler
+import io.gatling.core.controller.{Controller, ControllerCommand}
 import io.gatling.core.stats.DataWritersStatsEngine
 import io.gatling.core.stats.writer.RunMessage
+
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Try}
@@ -24,7 +26,7 @@ class GatlingFacade(implicit configuration: GatlingConfiguration) {
     val selectedSimulationClass: SelectedSimulationClass = Some(simClass)
 
     val selection = Selection(selectedSimulationClass, configuration)
-    // FIXME got rid of this because it breaks:
+    // FIXME derive class from passed-in instance, rather than Gatling's preference for the other way round
     // val simulation = selection.simulationClass.newInstance
     val simulationParams = simulation.params(configuration)
     val runMessage = RunMessage(simulationParams.name, selection.userDefinedSimulationId, selection.defaultSimulationId, nowMillis, selection.description)
