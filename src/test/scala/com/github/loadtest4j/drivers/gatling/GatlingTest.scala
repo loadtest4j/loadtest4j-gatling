@@ -15,16 +15,15 @@ import com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp
 import com.xebialabs.restito.semantics.Action.status
 import com.xebialabs.restito.semantics.Condition._
 import org.junit.Assert._
-
-import scala.util.control.NonFatal
+import scala.util.{Try, Failure}
 
 class GatlingTest {
 
-  private var httpServer: StubServer = _
+  private val httpServer = new StubServer()
 
   @Before
   def startServer(): Unit = {
-    httpServer = new StubServer().run()
+    httpServer.run()
   }
 
   @After
@@ -82,12 +81,9 @@ class GatlingTest {
     val driver = sut()
 
     // When
-    try {
-      driver.run(Collections.emptyList())
-      fail("This should not work.");
-    } catch {
-      // Then
-      case NonFatal(e: LoadTesterException) => assertEquals("No requests were specified for the load test.", e.getMessage)
+    Try(driver.run(Collections.emptyList())) match {
+      case Failure(e: LoadTesterException) => assertEquals("No requests were specified for the load test.", e.getMessage)
+      case _ => fail("This should not work.")
     }
   }
 
