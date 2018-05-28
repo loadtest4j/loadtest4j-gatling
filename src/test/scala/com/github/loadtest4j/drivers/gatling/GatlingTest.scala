@@ -2,23 +2,21 @@ package com.github.loadtest4j.drivers.gatling
 
 import java.util
 
-import com.github.loadtest4j.loadtest4j.Driver
-import com.github.loadtest4j.loadtest4j.LoadTesterException
+import com.github.loadtest4j.loadtest4j.{Driver, LoadTesterException}
 import com.xebialabs.restito.server.StubServer
 import org.glassfish.grizzly.http.Method
 import org.glassfish.grizzly.http.util.HttpStatus
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit._
 import java.util.Collections
-import java.util.logging.Level
-import java.util.logging.Logger
+import java.util.logging._
 
 import com.xebialabs.restito.builder.stub.StubHttp.whenHttp
 import com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp
 import com.xebialabs.restito.semantics.Action.status
 import com.xebialabs.restito.semantics.Condition._
 import org.junit.Assert._
+
+import scala.util.control.NonFatal
 
 class GatlingTest {
 
@@ -89,7 +87,7 @@ class GatlingTest {
       fail("This should not work.");
     } catch {
       // Then
-      case (e: LoadTesterException) => assertEquals("No requests were specified for the load test.", e.getMessage)
+      case NonFatal(e: LoadTesterException) => assertEquals("No requests were specified for the load test.", e.getMessage)
     }
   }
 
