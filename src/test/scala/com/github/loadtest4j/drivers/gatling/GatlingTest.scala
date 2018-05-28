@@ -18,9 +18,7 @@ import com.xebialabs.restito.builder.stub.StubHttp.whenHttp
 import com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp
 import com.xebialabs.restito.semantics.Action.status
 import com.xebialabs.restito.semantics.Condition._
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
+import org.junit.Assert._
 
 class GatlingTest {
 

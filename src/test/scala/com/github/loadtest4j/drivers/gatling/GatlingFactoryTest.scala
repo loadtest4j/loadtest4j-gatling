@@ -2,9 +2,7 @@ package com.github.loadtest4j.drivers.gatling
 
 import com.github.loadtest4j.loadtest4j.DriverFactory
 import org.junit.Test
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
+import org.junit.Assert._
 
 import scala.collection.JavaConverters
 
