@@ -48,8 +48,8 @@ class GatlingTest {
     val result = driver.run(Collections.singletonList(DriverRequests.get("/")))
 
     // Then
-    assertEquals(0, result.getErrors)
-    assertGreaterThanOrEqualTo(1, result.getRequests)
+    assertEquals(0, result.getKo)
+    assertGreaterThanOrEqualTo(1, result.getOk)
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"))
   }
@@ -68,8 +68,8 @@ class GatlingTest {
     val result = driver.run(requests)
 
     // Then
-    assertEquals(0, result.getErrors)
-    assertGreaterThanOrEqualTo(1, result.getRequests)
+    assertEquals(0, result.getKo)
+    assertGreaterThanOrEqualTo(1, result.getOk)
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"))
   }
@@ -88,8 +88,8 @@ class GatlingTest {
     val result = driver.run(requests)
 
     // Then
-    assertGreaterThanOrEqualTo(1, result.getRequests)
-    assertEquals(0, result.getErrors)
+    assertGreaterThanOrEqualTo(1, result.getOk)
+    assertEquals(0, result.getKo)
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"))
     // And
