@@ -55,8 +55,8 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   }
 
   private def toDriverResult(numberOfRequestsStatistics: Statistics[Long]) = {
-    val errors = numberOfRequestsStatistics.failure
-    val requests = numberOfRequestsStatistics.total
-    new DriverResult(errors, requests)
+    val ok = numberOfRequestsStatistics.success
+    val ko = numberOfRequestsStatistics.failure
+    new DriverResult(ok, ko)
   }
 }
