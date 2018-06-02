@@ -50,6 +50,7 @@ class GatlingTest {
     // Then
     assertEquals(0, result.getKo)
     assertGreaterThanOrEqualTo(1, result.getOk)
+    assertStartsWith("file://", result.getReportUrl.get())
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"))
   }
@@ -106,6 +107,11 @@ class GatlingTest {
       case Failure(e: LoadTesterException) => assertEquals("No requests were specified for the load test.", e.getMessage)
       case _ => fail("This should not work.")
     }
+  }
+
+  private def assertStartsWith(prefix: String, actual: String): Unit = {
+    val msg = "'%s' did not start with the substring '%s'.".format(actual, prefix)
+    assertTrue(msg, actual.startsWith(prefix))
   }
 
   private def assertGreaterThanOrEqualTo(expected: Long, actual: Long): Unit  ={
