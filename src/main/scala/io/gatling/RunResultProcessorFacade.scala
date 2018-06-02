@@ -1,14 +1,16 @@
 package io.gatling
 
+import com.github.loadtest4j.drivers.gatling.GatlingResult
 import com.github.loadtest4j.loadtest4j.DriverResult
 import io.gatling.app.RunResult
 import io.gatling.charts.stats.LogFileReader
 import io.gatling.commons.stats.{GeneralStats, KO, OK}
 import io.gatling.core.config.GatlingConfiguration
+import io.gatling.core.config.GatlingFiles.simulationLogDirectory
 
 class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
-    val logFileReader = initLogFileReader(runResult)
+    val logFileReader = new LogFileReader(runResult.runId)
 
     // We don't use these result filters in loadtest4j
     val requestName = None
@@ -36,11 +38,8 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
       case (rangeName, count) => GroupedCount(rangeName, count, total.count)
     }
 
-    toDriverResult(numberOfRequestsStatistics)
-  }
-
-  private def initLogFileReader(runResult: RunResult) = {
-    new LogFileReader(runResult.runId)
+    val reportUrl = simulationLogDirectory(runResult.runId, create = false).toUri.toString
+    toDriverResult(numberOfRequestsStatistics, reportUrl)
   }
 
   private case class Statistics[T: Numeric](total: T, success: T, failure: T) {
@@ -54,9 +53,10 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
     val percentage: Int = if (total == 0) 0 else (count.toDouble / total * 100).round.toInt
   }
 
-  private def toDriverResult(numberOfRequestsStatistics: Statistics[Long]) = {
+  private def toDriverResult(numberOfRequestsStatistics: Statistics[Long], reportUrl: String) = {
     val ok = numberOfRequestsStatistics.success
     val ko = numberOfRequestsStatistics.failure
-    new DriverResult(ok, ko)
+
+    new GatlingResult(ok, ko, reportUrl)
   }
 }
