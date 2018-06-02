@@ -50,6 +50,7 @@ class GatlingTest {
     // Then
     assertEquals(0, result.getKo)
     assertGreaterThanOrEqualTo(1, result.getOk)
+    assertTrue(result.getActualDuration.toMillis > 0)
     assertStartsWith("file://", result.getReportUrl.get())
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"))
