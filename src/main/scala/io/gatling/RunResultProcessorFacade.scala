@@ -1,5 +1,7 @@
 package io.gatling
 
+import java.time.Duration
+
 import com.github.loadtest4j.drivers.gatling.GatlingResult
 import com.github.loadtest4j.loadtest4j.DriverResult
 import io.gatling.app.RunResult
@@ -38,8 +40,12 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
       case (rangeName, count) => GroupedCount(rangeName, count, total.count)
     }
 
+    val actualDuration = Duration.ofMillis(logFileReader.runEnd - logFileReader.runStart)
     val reportUrl = simulationLogDirectory(runResult.runId, create = false).toUri.toString
-    toDriverResult(numberOfRequestsStatistics, reportUrl)
+    val okRequests = numberOfRequestsStatistics.success
+    val koRequests = numberOfRequestsStatistics.failure
+
+    new GatlingResult(okRequests, koRequests, actualDuration, reportUrl)
   }
 
   private case class Statistics[T: Numeric](total: T, success: T, failure: T) {
@@ -51,12 +57,5 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
 
   private case class GroupedCount(name: String, count: Long, total: Long) {
     val percentage: Int = if (total == 0) 0 else (count.toDouble / total * 100).round.toInt
-  }
-
-  private def toDriverResult(numberOfRequestsStatistics: Statistics[Long], reportUrl: String) = {
-    val ok = numberOfRequestsStatistics.success
-    val ko = numberOfRequestsStatistics.failure
-
-    new GatlingResult(ok, ko, reportUrl)
   }
 }
