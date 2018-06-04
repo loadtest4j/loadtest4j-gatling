@@ -15,7 +15,7 @@ import io.gatling.core.stats.writer.RunMessage
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 class GatlingFacade(implicit configuration: GatlingConfiguration) {
   def runSimulation(simulation: Simulation): RunResult = {
@@ -40,14 +40,16 @@ class GatlingFacade(implicit configuration: GatlingConfiguration) {
     System.gc()
 
     val timeout = Int.MaxValue.milliseconds - 10.seconds
-    try {
-      val whenRunDone = coreComponents.controller.ask(ControllerCommand.Start(scenarios))(timeout).mapTo[Try[String]]
-      Await.result(whenRunDone, timeout)
-      simulation.executeAfter()
-      RunResult(runMessage.runId, simulationParams.assertions.nonEmpty)
-    } finally {
-      val whenTerminated = system.terminate()
-      Await.result(whenTerminated, 2.seconds)
+    val whenRunDone = coreComponents.controller.ask(ControllerCommand.Start(scenarios))(timeout).mapTo[Try[String]]
+    val runResult = Await.result(whenRunDone, timeout) match {
+      case Failure(t) => throw t
+      case _ =>
+        simulation.executeAfter()
+        RunResult(runMessage.runId, simulationParams.assertions.nonEmpty)
     }
+    val whenTerminated = system.terminate()
+    Await.result(whenTerminated, 2.seconds)
+
+    runResult
   }
 }
