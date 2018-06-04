@@ -5,14 +5,17 @@ import java.time.Duration
 import com.github.loadtest4j.drivers.gatling.GatlingResult
 import com.github.loadtest4j.loadtest4j.DriverResult
 import io.gatling.app.RunResult
+import io.gatling.charts.report.{ReportsGenerationInputs, ReportsGenerator}
 import io.gatling.charts.stats.LogFileReader
+import io.gatling.commons.stats.assertion.AssertionValidator
 import io.gatling.commons.stats.{GeneralStats, KO, OK}
 import io.gatling.core.config.GatlingConfiguration
-import io.gatling.core.config.GatlingFiles.simulationLogDirectory
 
 class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
     val logFileReader = new LogFileReader(runResult.runId)
+
+    val reportIndexPath = generateCustomReport(logFileReader, runResult)
 
     // We don't use these result filters in loadtest4j
     val requestName = None
@@ -41,11 +44,17 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
     }
 
     val actualDuration = Duration.ofMillis(logFileReader.runEnd - logFileReader.runStart)
-    val reportUrl = simulationLogDirectory(runResult.runId, create = false).toUri.toString
+    val reportUrl = reportIndexPath.toUri.toString
     val okRequests = numberOfRequestsStatistics.success
     val koRequests = numberOfRequestsStatistics.failure
 
     new GatlingResult(okRequests, koRequests, actualDuration, reportUrl)
+  }
+
+  private def generateCustomReport(logFileReader: LogFileReader, runResult: RunResult) = {
+    val assertionResults = AssertionValidator.validateAssertions(logFileReader)
+    val reportsGenerationInputs = ReportsGenerationInputs(runResult.runId, logFileReader, assertionResults)
+    new ReportsGenerator().generateFor(reportsGenerationInputs)
   }
 
   private case class Statistics[T: Numeric](total: T, success: T, failure: T) {
