@@ -10,12 +10,13 @@ import io.gatling.charts.stats.LogFileReader
 import io.gatling.commons.stats.assertion.AssertionValidator
 import io.gatling.commons.stats.{GeneralStats, KO, OK}
 import io.gatling.core.config.GatlingConfiguration
+import io.gatling.core.config.GatlingFiles.simulationLogDirectory
 
 class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
     val logFileReader = new LogFileReader(runResult.runId)
 
-    val reportIndexPath = generateCustomReport(logFileReader, runResult)
+    val reportPath = generateReport(logFileReader, runResult)
 
     // We don't use these result filters in loadtest4j
     val requestName = None
@@ -44,22 +45,31 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
     }
 
     val actualDuration = Duration.ofMillis(logFileReader.runEnd - logFileReader.runStart)
-    val reportUrl = reportIndexPath.toUri.toString
+    val reportUrl = reportPath.toUri.toString
     val okRequests = numberOfRequestsStatistics.success
     val koRequests = numberOfRequestsStatistics.failure
 
     new GatlingResult(okRequests, koRequests, actualDuration, reportUrl)
   }
 
-  private def generateCustomReport(logFileReader: LogFileReader, runResult: RunResult) = {
+  private def generateReport(logFileReader: LogFileReader, runResult: RunResult) = {
+    if (reportsGenerationEnabled) {
+      generateHtmlReport(logFileReader, runResult)
+    } else {
+      simulationLogDirectory(runResult.runId, create = false)
+    }
+  }
+  
+  private def generateHtmlReport(logFileReader: LogFileReader, runResult: RunResult) = {
     val assertionResults = AssertionValidator.validateAssertions(logFileReader)
     val reportsGenerationInputs = ReportsGenerationInputs(runResult.runId, logFileReader, assertionResults)
     new ReportsGenerator().generateFor(reportsGenerationInputs)
   }
 
-  private case class Statistics[T: Numeric](total: T, success: T, failure: T) {
-    def all = List(total, success, failure)
-  }
+  private def reportsGenerationEnabled =
+    configuration.core.directory.reportsOnly.isDefined || (configuration.data.fileDataWriterEnabled && !configuration.charting.noReports)
+  
+  private case class Statistics[T: Numeric](total: T, success: T, failure: T)
 
   private def percentiles(rank: Double, total: GeneralStats, ok: GeneralStats, ko: GeneralStats) =
     Statistics(total.percentile(rank), ok.percentile(rank), ko.percentile(rank))
