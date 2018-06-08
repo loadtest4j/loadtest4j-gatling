@@ -58,6 +58,23 @@ class GatlingTest {
   }
 
   @Test
+  def testRunWithQueryString(): Unit = {
+    // Given
+    val driver = sut()
+    // And
+    whenHttp(httpServer).`match`(get("/")).`then`(status(HttpStatus.NOT_FOUND_404))
+    // And
+    whenHttp(httpServer).`match`(get("/"), parameter("foo", "bar")).`then`(status(HttpStatus.OK_200))
+
+    // When
+    val result = driver.run(Collections.singletonList(DriverRequests.getWithQueryParams("/", Map("foo" -> "bar"))))
+
+    // Then
+    assertEquals(0, result.getKo)
+    assertGreaterThanOrEqualTo(1, result.getOk)
+  }
+
+  @Test
   def testRunWithElaborateRequest(): Unit = {
     // Given
     val driver = sut()
