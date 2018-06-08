@@ -52,6 +52,7 @@ class GatlingTest {
     assertGreaterThanOrEqualTo(1, result.getOk)
     assertTrue(result.getActualDuration.toMillis > 0)
     assertStartsWith("file://", result.getReportUrl.get())
+    assertEndsWith("html", result.getReportUrl.get())
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"))
   }
@@ -113,6 +114,11 @@ class GatlingTest {
   private def assertStartsWith(prefix: String, actual: String): Unit = {
     val msg = "'%s' did not start with the substring '%s'.".format(actual, prefix)
     assertTrue(msg, actual.startsWith(prefix))
+  }
+
+  private def assertEndsWith(suffix: String, actual: String): Unit = {
+    val msg = "'%s' did not end with the substring '%s'.".format(actual, suffix)
+    assertTrue(msg, actual.endsWith(suffix))
   }
 
   private def assertGreaterThanOrEqualTo(expected: Long, actual: Long): Unit  ={
