@@ -42,11 +42,13 @@ package com.github.loadtest4j.drivers.gatling {
       val headers = scalaMap(request.getHeaders)
       val method = request.getMethod
       val path = request.getPath
+      val queryParams = scalaMap(request.getQueryParams)
 
       http("loadtest4j request")
         .httpRequest(method, path)
         .headers(headers)
         .body(stringBody(request.getBody))
+        .queryParamMap(queryParams)
     }
 
     private def stringBody(str: String): Body = {
