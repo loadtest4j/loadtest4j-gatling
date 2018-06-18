@@ -1,8 +1,9 @@
 package com.github.loadtest4j.drivers.gatling {
   import java.util
 
-  import com.github.loadtest4j.loadtest4j.{Driver, DriverRequest, DriverResult, LoadTesterException}
-  import io.gatling.{GatlingFacade, RunResultProcessorFacade}
+  import com.github.loadtest4j.loadtest4j.LoadTesterException
+  import com.github.loadtest4j.loadtest4j.driver.{Driver, DriverRequest, DriverResult}
+  import io.gatling.GatlingFacade
   import io.gatling.core.Predef._
   import io.gatling.core.body.{Body, CompositeByteArrayBody}
   import io.gatling.core.config.GatlingConfiguration
@@ -56,8 +57,7 @@ package com.github.loadtest4j.drivers.gatling {
     }
 
     private def runSimulation(simulation: Simulation) = {
-      val runResult = new GatlingFacade().runSimulation(simulation)
-      new RunResultProcessorFacade().processRunResult(runResult)
+      new GatlingFacade().start(simulation)
     }
 
     private def scalaSeq[T](javaList: util.List[T]): Seq[T] = {

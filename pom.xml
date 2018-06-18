@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.github.loadtest4j</groupId>
             <artifactId>loadtest4j</artifactId>
-            <version>0.10.0</version>
+            <version>8e355a1119</version>
         </dependency>
         <dependency>
             <groupId>io.gatling</groupId>

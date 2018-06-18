@@ -1,6 +1,6 @@
 package com.github.loadtest4j.drivers.gatling
 
-import com.github.loadtest4j.loadtest4j.DriverFactory
+import com.github.loadtest4j.loadtest4j.driver.DriverFactory
 import org.junit.Test
 import org.junit.Assert._
 
