@@ -1,6 +1,7 @@
 # loadtest4j-gatling
 
 [![Build Status](https://travis-ci.com/loadtest4j/loadtest4j-gatling.svg?branch=master)](https://travis-ci.com/loadtest4j/loadtest4j-gatling)
+[![Codecov](https://codecov.io/gh/loadtest4j/loadtest4j-gatling/branch/master/graph/badge.svg)](https://codecov.io/gh/loadtest4j/loadtest4j-gatling)
 [![JitPack Release](https://jitpack.io/v/com.github.loadtest4j/loadtest4j-gatling.svg)](https://jitpack.io/#com.github.loadtest4j/loadtest4j-gatling)
 
 A Gatling driver for loadtest4j.
