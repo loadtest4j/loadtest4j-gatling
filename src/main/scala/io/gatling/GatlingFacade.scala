@@ -54,6 +54,8 @@ class GatlingFacade(implicit configuration: GatlingConfiguration) {
   }
   
   private def gc() = {
+    // Suppress Spotbugs warning about GC call...
+    // because this is benchmarking code, and we really do want it.
     System.gc()
   }
 }
