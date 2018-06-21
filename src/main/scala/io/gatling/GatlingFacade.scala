@@ -37,7 +37,7 @@ class GatlingFacade(implicit configuration: GatlingConfiguration) {
     val coreComponents = CoreComponents(controller, throttler, statsEngine, exit, configuration)
     val scenarios = simulationParams.scenarios(system, coreComponents)
 
-    System.gc()
+    gc()
 
     val timeout = Int.MaxValue.milliseconds - 10.seconds
     val whenRunDone = coreComponents.controller.ask(ControllerCommand.Start(scenarios))(timeout).mapTo[Try[String]]
@@ -51,5 +51,11 @@ class GatlingFacade(implicit configuration: GatlingConfiguration) {
     Await.result(whenTerminated, 2.seconds)
 
     runResult
+  }
+  
+  private def gc() = {
+    // Suppress Spotbugs warning about GC call...
+    // because this is benchmarking code, and we really do want it.
+    System.gc()
   }
 }
