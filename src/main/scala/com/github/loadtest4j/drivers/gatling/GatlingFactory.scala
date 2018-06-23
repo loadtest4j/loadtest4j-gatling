@@ -1,6 +1,6 @@
 package com.github.loadtest4j.drivers.gatling
 
-import com.github.loadtest4j.loadtest4j.{Driver, DriverFactory}
+import com.github.loadtest4j.loadtest4j.driver.{Driver, DriverFactory}
 import java.util
 
 import scala.collection.JavaConverters

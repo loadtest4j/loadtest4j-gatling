@@ -2,7 +2,8 @@ package com.github.loadtest4j.drivers.gatling
 
 import java.util
 
-import com.github.loadtest4j.loadtest4j.{Driver, LoadTesterException}
+import com.github.loadtest4j.loadtest4j.driver.Driver
+import com.github.loadtest4j.loadtest4j.LoadTesterException
 import com.xebialabs.restito.server.StubServer
 import org.glassfish.grizzly.http.Method
 import org.glassfish.grizzly.http.util.HttpStatus
@@ -51,10 +52,21 @@ class GatlingTest {
     assertEquals(0, result.getKo)
     assertGreaterThanOrEqualTo(1, result.getOk)
     assertTrue(result.getActualDuration.toMillis > 0)
+    assertTrue(result.getResponseTime.getPercentile(100).toMillis > 0)
     assertStartsWith("file://", result.getReportUrl.get())
     assertEndsWith("html", result.getReportUrl.get())
     // And
     verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"))
+  }
+
+  @Test(expected = classOf[IllegalArgumentException])
+  def testRunWithInvalidPercentile(): Unit = {
+    val driver = sut()
+    whenHttp(httpServer).`match`(get("/")).`then`(status(HttpStatus.OK_200))
+
+    val result = driver.run(Collections.singletonList(DriverRequests.get("/")))
+
+    result.getResponseTime.getPercentile(102)
   }
 
   @Test

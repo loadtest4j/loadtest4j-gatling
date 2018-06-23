@@ -3,7 +3,7 @@ package io.gatling
 import java.time.Duration
 
 import com.github.loadtest4j.drivers.gatling.GatlingResult
-import com.github.loadtest4j.loadtest4j.DriverResult
+import com.github.loadtest4j.loadtest4j.driver.DriverResult
 import io.gatling.app.RunResult
 import io.gatling.charts.report.{ReportsGenerationInputs, ReportsGenerator}
 import io.gatling.charts.stats.LogFileReader
@@ -12,7 +12,7 @@ import io.gatling.commons.stats.{KO, OK}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.config.GatlingFiles.simulationLogDirectory
 
-class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
+private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
     val logFileReader = new LogFileReader(runResult.runId)
 
@@ -22,22 +22,19 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
     val requestName = None
     val group = None
 
+    // Request count
     val total = logFileReader.requestGeneralStats(requestName, group, None)
     val ok = logFileReader.requestGeneralStats(requestName, group, Some(OK))
     val ko = logFileReader.requestGeneralStats(requestName, group, Some(KO))
 
+    // Response time
+    val responseTime = new GatlingResponseTime(total.percentile)
+
     // Gatling can also supply these statistics:
     //
-    // val minResponseTimeStatistics = Statistics(total.min, ok.min, ko.min)
-    // val maxResponseTimeStatistics = Statistics(total.max, ok.max, ko.max)
     // val meanResponseTimeStatistics = Statistics(total.mean, ok.mean, ko.mean)
     // val stdDeviationStatistics = Statistics(total.stdDev, ok.stdDev, ko.stdDev)
     // val meanNumberOfRequestsPerSecondStatistics = Statistics(total.meanRequestsPerSec, ok.meanRequestsPerSec, ko.meanRequestsPerSec)
-    //
-    // val responseTimePercentile1 = percentiles(configuration.charting.indicators.percentile1, total, ok, ko)
-    // val responseTimePercentile2 = percentiles(configuration.charting.indicators.percentile2, total, ok, ko)
-    // val responseTimePercentile3 = percentiles(configuration.charting.indicators.percentile3, total, ok, ko)
-    // val responseTimePercentile4 = percentiles(configuration.charting.indicators.percentile4, total, ok, ko)
     //
     // val groupedCounts = logFileReader
     //  .numberOfRequestInResponseTimeRange(requestName, group).map {
@@ -49,7 +46,7 @@ class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
     val okRequests = ok.count
     val koRequests = ko.count
 
-    new GatlingResult(okRequests, koRequests, actualDuration, reportUrl)
+    new GatlingResult(okRequests, koRequests, actualDuration, responseTime, reportUrl)
   }
 
   private def generateReport(logFileReader: LogFileReader, runResult: RunResult) = {
