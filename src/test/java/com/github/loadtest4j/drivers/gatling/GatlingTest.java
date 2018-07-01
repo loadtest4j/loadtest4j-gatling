@@ -1,7 +1,7 @@
 package com.github.loadtest4j.drivers.gatling;
 
 import com.github.loadtest4j.loadtest4j.driver.Driver;
-import static com.github.loadtest4j.drivers.gatling.DriverResultAssert.assertThat;
+
 import com.github.loadtest4j.loadtest4j.LoadTesterException;
 import com.github.loadtest4j.loadtest4j.driver.DriverRequest;
 import com.github.loadtest4j.loadtest4j.driver.DriverResult;
@@ -19,14 +19,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.github.loadtest4j.drivers.gatling.DriverResultAssert.assertThat;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-import static com.xebialabs.restito.builder.verify.VerifyHttp.verifyHttp;
+
+import com.xebialabs.restito.builder.verify.VerifyHttp;
+
 import static com.xebialabs.restito.semantics.Action.status;
 import static com.xebialabs.restito.semantics.Condition.*;
+
 import org.junit.rules.ExpectedException;
 import scala.concurrent.duration.FiniteDuration;
 
 public class GatlingTest {
+    static {
+        // Silence Restito logging.
+        Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
+    }
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     private StubServer httpServer = new StubServer();
 
     @Before
@@ -38,9 +49,6 @@ public class GatlingTest {
     public void stopServer() {
         httpServer.stop();
     }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private Driver sut() {
         final String serviceUrl = String.format("http://localhost:%d", httpServer.getPort());
@@ -65,7 +73,7 @@ public class GatlingTest {
                 .hasMaxResponseTimeGreaterThan(java.time.Duration.ZERO)
                 .hasReportUrlWithScheme("file");
         // And
-        verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
+        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,7 +126,7 @@ public class GatlingTest {
                 .hasOkGreaterThan(1)
                 .hasKo(0);
         // And
-        verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"));
+        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"));
     }
 
     @Test
@@ -139,9 +147,9 @@ public class GatlingTest {
                 .hasOkGreaterThan(1)
                 .hasKo(0);
         // And
-        verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
+        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
         // And
-        verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/pets"));
+        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/pets"));
     }
 
     @Test
@@ -155,10 +163,5 @@ public class GatlingTest {
 
         // When
         driver.run(Collections.emptyList());
-    }
-
-    static {
-        // Silence Restito logging.
-        Logger.getLogger("org.glassfish.grizzly").setLevel(Level.OFF);
     }
 }
