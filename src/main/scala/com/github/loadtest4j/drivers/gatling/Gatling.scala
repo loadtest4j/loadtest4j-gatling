@@ -21,9 +21,9 @@ package com.github.loadtest4j.drivers.gatling {
     private def loadGatlingConfiguration() = {
       val original = GatlingConfiguration.load()
 
-      val silenceConsoleAppender = original.data.copy(dataWriters = Seq(FileDataWriterType))
+      val dataWithoutConsoleAppender = original.data.copy(dataWriters = Seq(FileDataWriterType))
 
-      original.copy(data = silenceConsoleAppender)
+      original.copy(data = dataWithoutConsoleAppender)
     }
 
     private val baseConfig = http.baseURL(url)
