@@ -7,6 +7,7 @@ package com.github.loadtest4j.drivers.gatling {
   import io.gatling.core.Predef._
   import io.gatling.core.body.{Body, CompositeByteArrayBody}
   import io.gatling.core.config.GatlingConfiguration
+  import io.gatling.core.stats.writer.FileDataWriterType
   import io.gatling.http.Predef._
 
   import scala.collection.JavaConverters
@@ -15,7 +16,15 @@ package com.github.loadtest4j.drivers.gatling {
   private class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int) extends Driver {
 
     // We are not in the conventional Gatling test runner, so explicitly load the Gatling config
-    implicit val configuration: GatlingConfiguration = GatlingConfiguration.load()
+    implicit val configuration: GatlingConfiguration = loadGatlingConfiguration()
+
+    private def loadGatlingConfiguration() = {
+      val original = GatlingConfiguration.load()
+
+      val silenceConsoleAppender = original.data.copy(dataWriters = Seq(FileDataWriterType))
+
+      original.copy(data = silenceConsoleAppender)
+    }
 
     private val baseConfig = http.baseURL(url)
 
