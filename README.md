@@ -8,44 +8,40 @@ A Gatling driver for loadtest4j.
 
 ## Setup
 
-Add the [JitPack](https://jitpack.io) repository to your `pom.xml`:
+1. **Add the library** to your `pom.xml`:
 
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-```
+    ```xml
+     <dependency>
+         <groupId>com.github.loadtest4j</groupId>
+         <artifactId>loadtest4j-gatling</artifactId>
+         <version>[version]</version>
+     </dependency>   
+     
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+    ```
 
-Then add this library:
+2. **Configure the driver** in `src/test/resources/loadtest4j.properties`:
+    
+    ```properties
+    loadtest4j.driver = com.github.loadtest4j.drivers.gatling.GatlingFactory
+    loadtest4j.driver.duration = 10
+    loadtest4j.driver.url = https://example.com
+    ```
 
-```xml
-<dependency>
-    <groupId>com.github.loadtest4j</groupId>
-    <artifactId>loadtest4j-gatling</artifactId>
-    <version>[git tag]</version>
-</dependency>
-```
+3. **Optional: Add advanced Gatling configuration** in `src/test/resources/gatling.conf`.
 
-## Usage
-
-Add the file `loadtest4j.properties` to your `src/test/resources` directory and configure the load test driver:
-
-```
-loadtest4j.driver = com.github.loadtest4j.drivers.gatling.GatlingFactory
-loadtest4j.driver.duration = 10
-loadtest4j.driver.url = https://example.com
-```
-
-Then write your load tests in Java using the standard [LoadTester API](https://github.com/loadtest4j/loadtest4j).
+4. **Write your load tests** using the standard [LoadTester API](https://github.com/loadtest4j/loadtest4j).
 
 ## Control Gatling logging
 
-The default Gatling logs are extremely noisy. To control the output, change the log threshold for its noisiest classes in your SLF4J logger configuration.
+To reduce Gatling log output, change the log threshold for its noisiest classes in your SLF4J logger configuration.
 
-If you are using Logback (the default logger for Gatling), you could configure `logback.xml` like this:
+If you are using Logback (the default Gatling logger), you could configure `logback.xml` like this:
 
 ```xml
 <configuration>
