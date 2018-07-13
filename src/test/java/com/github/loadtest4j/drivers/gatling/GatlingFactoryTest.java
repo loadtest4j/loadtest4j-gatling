@@ -18,7 +18,7 @@ public class GatlingFactoryTest {
         final Set<String> mandatoryProperties = sut.getMandatoryProperties();
 
         assertThat(mandatoryProperties)
-                .containsExactly("duration", "url");
+                .containsExactly("duration", "url", "usersPerSecond");
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -35,6 +35,7 @@ public class GatlingFactoryTest {
         final Map<String, String> properties = new ConcurrentHashMap<>();
         properties.put("duration", "2");
         properties.put("url", "https://example.com");
+        properties.put("usersPerSecond", "1");
 
         final Driver driver = sut.create(properties);
 
