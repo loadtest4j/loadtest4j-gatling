@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 class GatlingFactory extends DriverFactory {
 
   override def getMandatoryProperties: util.Set[String] = {
-    JavaConverters.setAsJavaSet(Set("duration", "url"))
+    JavaConverters.setAsJavaSet(Set("duration", "url", "usersPerSecond"))
   }
 
   /**
@@ -19,15 +19,13 @@ class GatlingFactory extends DriverFactory {
     *
     * - `duration`
     * - `url`
+    * - `usersPerSecond`
     *
-    * Optional properties:
-    *
-    * - `usersPerSecond` (defaults to 1)
     */
   override def create(properties: util.Map[String, String]): Driver = {
     val duration = properties.get("duration").toLong.seconds
     val url = properties.get("url")
-    val usersPerSecond = properties.getOrDefault("usersPerSecond", "1").toInt
+    val usersPerSecond = properties.get("usersPerSecond").toInt
 
     new Gatling(duration, url, usersPerSecond)
   }
