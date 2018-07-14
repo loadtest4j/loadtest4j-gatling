@@ -2,7 +2,7 @@ package io.gatling
 
 import java.time.Duration
 
-import com.github.loadtest4j.drivers.gatling.GatlingResult
+import com.github.loadtest4j.drivers.gatling.{GatlingResponseTime, GatlingResult}
 import com.github.loadtest4j.loadtest4j.driver.DriverResult
 import io.gatling.app.RunResult
 import io.gatling.charts.report.{ReportsGenerationInputs, ReportsGenerator}
