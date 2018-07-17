@@ -28,7 +28,6 @@ A Gatling driver for loadtest4j.
 2. **Configure the driver** in `src/test/resources/loadtest4j.properties`:
     
     ```properties
-    loadtest4j.driver = com.github.loadtest4j.drivers.gatling.GatlingFactory
     loadtest4j.driver.duration = 10
     loadtest4j.driver.url = https://example.com
     loadtest4j.driver.usersPerSecond = 1
