@@ -1,4 +1,4 @@
-package com.github.loadtest4j.drivers.gatling;
+package org.loadtest4j.drivers.gatling;
 
 import com.github.loadtest4j.loadtest4j.driver.Driver;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.github.loadtest4j.drivers.gatling.DriverResultAssert.assertThat;
+import static org.loadtest4j.drivers.gatling.DriverResultAssert.assertThat;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 
 import com.xebialabs.restito.builder.verify.VerifyHttp;

@@ -1,4 +1,4 @@
-package com.github.loadtest4j.drivers.gatling
+package org.loadtest4j.drivers.gatling
 
 import java.time.Duration
 

@@ -11,18 +11,18 @@ A Gatling driver for loadtest4j.
 1. **Add the library** to your `pom.xml`:
 
     ```xml
-     <dependency>
-         <groupId>com.github.loadtest4j</groupId>
-         <artifactId>loadtest4j-gatling</artifactId>
-         <version>[version]</version>
-     </dependency>   
+    <dependency>
+        <groupId>com.github.loadtest4j</groupId>
+        <artifactId>loadtest4j-gatling</artifactId>
+        <version>[version]</version>
+    </dependency>
+    ```
      
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
+    ```xml
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
     ```
 
 2. **Configure the driver** in `src/test/resources/loadtest4j.properties`:

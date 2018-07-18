@@ -2,7 +2,6 @@ package io.gatling
 
 import java.time.Duration
 
-import com.github.loadtest4j.drivers.gatling.{GatlingResponseTime, GatlingResult}
 import com.github.loadtest4j.loadtest4j.driver.DriverResult
 import io.gatling.app.RunResult
 import io.gatling.charts.report.{ReportsGenerationInputs, ReportsGenerator}
@@ -11,6 +10,7 @@ import io.gatling.commons.stats.assertion.AssertionValidator
 import io.gatling.commons.stats.{KO, OK}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.config.GatlingFiles.simulationLogDirectory
+import org.loadtest4j.drivers.gatling.{GatlingResponseTime, GatlingResult}
 
 private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
