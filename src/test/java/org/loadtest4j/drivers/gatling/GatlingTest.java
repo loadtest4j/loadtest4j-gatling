@@ -1,14 +1,19 @@
 package org.loadtest4j.drivers.gatling;
 
-import com.github.loadtest4j.loadtest4j.driver.Driver;
-
-import com.github.loadtest4j.loadtest4j.LoadTesterException;
-import com.github.loadtest4j.loadtest4j.driver.DriverRequest;
-import com.github.loadtest4j.loadtest4j.driver.DriverResult;
+import com.xebialabs.restito.builder.verify.VerifyHttp;
 import com.xebialabs.restito.server.StubServer;
 import org.glassfish.grizzly.http.Method;
 import org.glassfish.grizzly.http.util.HttpStatus;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.loadtest4j.LoadTesterException;
+import org.loadtest4j.driver.Driver;
+import org.loadtest4j.driver.DriverRequest;
+import org.loadtest4j.driver.DriverResult;
+import scala.concurrent.duration.FiniteDuration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,16 +24,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.loadtest4j.drivers.gatling.DriverResultAssert.assertThat;
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-
-import com.xebialabs.restito.builder.verify.VerifyHttp;
-
 import static com.xebialabs.restito.semantics.Action.status;
 import static com.xebialabs.restito.semantics.Condition.*;
-
-import org.junit.rules.ExpectedException;
-import scala.concurrent.duration.FiniteDuration;
+import static org.loadtest4j.drivers.gatling.DriverResultAssert.assertThat;
 
 public class GatlingTest {
     static {

@@ -1,7 +1,8 @@
 package org.loadtest4j.drivers.gatling
 
-import com.github.loadtest4j.loadtest4j.driver.{Driver, DriverFactory}
 import java.util
+
+import org.loadtest4j.driver.{Driver, DriverFactory}
 
 import scala.collection.JavaConverters
 import scala.concurrent.duration._

@@ -1,6 +1,6 @@
 package org.loadtest4j.drivers.gatling;
 
-import com.github.loadtest4j.loadtest4j.driver.DriverRequest;
+import org.loadtest4j.driver.DriverRequest;
 
 import java.util.Collections;
 import java.util.Map;

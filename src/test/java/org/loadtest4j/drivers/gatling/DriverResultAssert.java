@@ -1,7 +1,7 @@
 package org.loadtest4j.drivers.gatling;
 
-import com.github.loadtest4j.loadtest4j.driver.DriverResult;
 import org.assertj.core.api.AbstractAssert;
+import org.loadtest4j.driver.DriverResult;
 
 import java.time.Duration;
 

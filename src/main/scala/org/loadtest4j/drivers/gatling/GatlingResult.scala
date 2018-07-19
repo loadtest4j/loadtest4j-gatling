@@ -3,8 +3,8 @@ package org.loadtest4j.drivers.gatling
 import java.time.Duration
 import java.util.Optional
 
-import com.github.loadtest4j.loadtest4j.driver.DriverResponseTime
-import com.github.loadtest4j.loadtest4j.driver.DriverResult
+import org.loadtest4j.driver.DriverResponseTime
+import org.loadtest4j.driver.DriverResult
 
 class GatlingResult(ok: Long, ko: Long, actualDuration: Duration, responseTime: DriverResponseTime, reportUrl: String) extends DriverResult {
   override def getKo: Long = ko

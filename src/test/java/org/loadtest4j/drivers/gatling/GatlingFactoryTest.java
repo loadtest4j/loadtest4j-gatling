@@ -1,8 +1,8 @@
 package org.loadtest4j.drivers.gatling;
 
-import com.github.loadtest4j.loadtest4j.driver.Driver;
-import com.github.loadtest4j.loadtest4j.driver.DriverFactory;
 import org.junit.Test;
+import org.loadtest4j.driver.Driver;
+import org.loadtest4j.driver.DriverFactory;
 
 import java.util.Map;
 import java.util.Set;

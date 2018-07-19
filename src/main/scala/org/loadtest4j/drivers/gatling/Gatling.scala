@@ -2,15 +2,14 @@ package org.loadtest4j.drivers.gatling
 
 import java.util
 
-import com.github.loadtest4j.loadtest4j.LoadTesterException
-import com.github.loadtest4j.loadtest4j.driver.{Driver, DriverRequest, DriverResult}
 import io.gatling.GatlingFacade
 import io.gatling.core.Predef._
 import io.gatling.core.body.{Body, CompositeByteArrayBody}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.stats.writer.FileDataWriterType
 import io.gatling.http.Predef._
-
+import org.loadtest4j.LoadTesterException
+import org.loadtest4j.driver.{Driver, DriverRequest, DriverResult}
 import scala.collection.JavaConverters
 import scala.concurrent.duration._
 
