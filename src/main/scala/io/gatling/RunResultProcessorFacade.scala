@@ -2,8 +2,6 @@ package io.gatling
 
 import java.time.Duration
 
-import com.github.loadtest4j.drivers.gatling.{GatlingResponseTime, GatlingResult}
-import com.github.loadtest4j.loadtest4j.driver.DriverResult
 import io.gatling.app.RunResult
 import io.gatling.charts.report.{ReportsGenerationInputs, ReportsGenerator}
 import io.gatling.charts.stats.LogFileReader
@@ -11,6 +9,8 @@ import io.gatling.commons.stats.assertion.AssertionValidator
 import io.gatling.commons.stats.{KO, OK}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.config.GatlingFiles.simulationLogDirectory
+import org.loadtest4j.driver.DriverResult
+import org.loadtest4j.drivers.gatling.{GatlingResponseTime, GatlingResult}
 
 private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
@@ -56,7 +56,7 @@ private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingC
       simulationLogDirectory(runResult.runId, create = false)
     }
   }
-  
+
   private def generateHtmlReport(logFileReader: LogFileReader, runResult: RunResult) = {
     val assertionResults = AssertionValidator.validateAssertions(logFileReader)
     val reportsGenerationInputs = ReportsGenerationInputs(runResult.runId, logFileReader, assertionResults)
