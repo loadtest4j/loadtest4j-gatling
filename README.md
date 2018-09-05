@@ -15,6 +15,7 @@ A Gatling driver for loadtest4j.
         <groupId>com.github.loadtest4j</groupId>
         <artifactId>loadtest4j-gatling</artifactId>
         <version>[version]</version>
+        <scope>test</scope>
     </dependency>
     ```
      
