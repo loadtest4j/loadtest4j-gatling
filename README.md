@@ -12,7 +12,7 @@ A Gatling driver for loadtest4j.
 
     ```xml
     <dependency>
-        <groupId>org.loadtest4j</groupId>
+        <groupId>org.loadtest4j.drivers</groupId>
         <artifactId>loadtest4j-gatling</artifactId>
         <version>[version]</version>
         <scope>test</scope>
