@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/loadtest4j/loadtest4j-gatling.svg?branch=master)](https://travis-ci.com/loadtest4j/loadtest4j-gatling)
 [![Codecov](https://codecov.io/gh/loadtest4j/loadtest4j-gatling/branch/master/graph/badge.svg)](https://codecov.io/gh/loadtest4j/loadtest4j-gatling)
-[![JitPack Release](https://jitpack.io/v/com.github.loadtest4j/loadtest4j-gatling.svg)](https://jitpack.io/#com.github.loadtest4j/loadtest4j-gatling)
+[![Maven Central](https://img.shields.io/maven-central/v/org.loadtest4j.drivers/loadtest4j-gatling.svg)](http://repo2.maven.org/maven2/org/loadtest4j/drivers/loadtest4j-gatling/)
 
 A Gatling driver for loadtest4j.
 
@@ -12,18 +12,11 @@ A Gatling driver for loadtest4j.
 
     ```xml
     <dependency>
-        <groupId>com.github.loadtest4j</groupId>
+        <groupId>org.loadtest4j</groupId>
         <artifactId>loadtest4j-gatling</artifactId>
         <version>[version]</version>
         <scope>test</scope>
     </dependency>
-    ```
-     
-    ```xml
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
     ```
 
 2. **Configure the driver** in `src/test/resources/loadtest4j.properties`:
