@@ -5,17 +5,17 @@ import org.loadtest4j.driver.DriverResult;
 
 import java.time.Duration;
 
-public class DriverResultAssert extends AbstractAssert<DriverResultAssert, DriverResult> {
+class DriverResultAssert extends AbstractAssert<DriverResultAssert, DriverResult> {
 
     private DriverResultAssert(DriverResult driverResult) {
         super(driverResult, DriverResultAssert.class);
     }
 
-    public static DriverResultAssert assertThat(DriverResult actual) {
+    protected static DriverResultAssert assertThat(DriverResult actual) {
         return new DriverResultAssert(actual);
     }
 
-    public DriverResultAssert hasOkGreaterThan(long ok) {
+    DriverResultAssert hasOkGreaterThan(long ok) {
         isNotNull();
 
         if (actual.getOk() < ok) {
@@ -25,7 +25,7 @@ public class DriverResultAssert extends AbstractAssert<DriverResultAssert, Drive
         return this;
     }
 
-    public DriverResultAssert hasKo(long ko) {
+    DriverResultAssert hasKo(long ko) {
         isNotNull();
 
         if (ko != actual.getKo()) {
@@ -35,7 +35,7 @@ public class DriverResultAssert extends AbstractAssert<DriverResultAssert, Drive
         return this;
     }
 
-    public DriverResultAssert hasActualDurationGreaterThan(Duration actualDuration) {
+    DriverResultAssert hasActualDurationGreaterThan(Duration actualDuration) {
         isNotNull();
 
         if (actual.getActualDuration().compareTo(actualDuration) < 1) {
@@ -45,25 +45,11 @@ public class DriverResultAssert extends AbstractAssert<DriverResultAssert, Drive
         return this;
     }
 
-    public DriverResultAssert hasMaxResponseTimeGreaterThan(Duration responseTime) {
+    DriverResultAssert hasMaxResponseTimeGreaterThan(Duration responseTime) {
         isNotNull();
 
         if (actual.getResponseTime().getPercentile(100).compareTo(responseTime) < 1) {
             failWithMessage("Expected max response time to be greater than <%s> but was <%s>", responseTime, actual.getResponseTime().getPercentile(100));
-        }
-
-        return this;
-    }
-
-    public DriverResultAssert hasReportUrlWithScheme(String scheme) {
-        isNotNull();
-
-        if (!actual.getReportUrl().isPresent()) {
-            failWithMessage("Expected report URL to be present but was absent");
-        }
-
-        if (!actual.getReportUrl().get().startsWith(scheme)) {
-            failWithMessage("Expected report URL scheme to be <%s> but it was not", scheme);
         }
 
         return this;

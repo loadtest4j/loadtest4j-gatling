@@ -69,8 +69,7 @@ public class GatlingTest {
                 .hasKo(0)
                 .hasOkGreaterThan(1)
                 .hasActualDurationGreaterThan(java.time.Duration.ZERO)
-                .hasMaxResponseTimeGreaterThan(java.time.Duration.ZERO)
-                .hasReportUrlWithScheme("file");
+                .hasMaxResponseTimeGreaterThan(java.time.Duration.ZERO);
         // And
         VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
     }
