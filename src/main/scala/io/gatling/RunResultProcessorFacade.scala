@@ -16,7 +16,7 @@ private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingC
   def processRunResult(runResult: RunResult): DriverResult = {
     val logFileReader = new LogFileReader(runResult.runId)
 
-    val reportPath = generateReport(logFileReader, runResult)
+    generateReport(logFileReader, runResult)
 
     // We don't use these result filters in loadtest4j
     val requestName = None
@@ -42,11 +42,10 @@ private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingC
     //}
 
     val actualDuration = Duration.ofMillis(logFileReader.runEnd - logFileReader.runStart)
-    val reportUrl = reportPath.toUri.toString
     val okRequests = ok.count
     val koRequests = ko.count
 
-    new GatlingResult(okRequests, koRequests, actualDuration, responseTime, reportUrl)
+    new GatlingResult(okRequests, koRequests, actualDuration, responseTime)
   }
 
   private def generateReport(logFileReader: LogFileReader, runResult: RunResult) = {
