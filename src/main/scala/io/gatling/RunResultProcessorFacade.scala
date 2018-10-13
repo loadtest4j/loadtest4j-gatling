@@ -10,7 +10,8 @@ import io.gatling.commons.stats.{KO, OK}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.config.GatlingFiles.simulationLogDirectory
 import org.loadtest4j.driver.DriverResult
-import org.loadtest4j.drivers.gatling.{GatlingResponseTime, GatlingResult}
+import org.loadtest4j.drivers.gatling.{GatlingResponseDistribution, GatlingResponseTime, GatlingResult}
+import scala.collection.JavaConverters._
 
 private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingConfiguration) {
   def processRunResult(runResult: RunResult): DriverResult = {
@@ -27,25 +28,16 @@ private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingC
     val ok = logFileReader.requestGeneralStats(requestName, group, Some(OK))
     val ko = logFileReader.requestGeneralStats(requestName, group, Some(KO))
 
-    // Response time
     val responseTime = new GatlingResponseTime(total.percentile)
-
-    // Gatling can also supply these statistics:
-    //
-    // val meanResponseTimeStatistics = Statistics(total.mean, ok.mean, ko.mean)
-    // val stdDeviationStatistics = Statistics(total.stdDev, ok.stdDev, ko.stdDev)
-    // val meanNumberOfRequestsPerSecondStatistics = Statistics(total.meanRequestsPerSec, ok.meanRequestsPerSec, ko.meanRequestsPerSec)
-    //
-    // val groupedCounts = logFileReader
-    //  .numberOfRequestInResponseTimeRange(requestName, group).map {
-    //  case (rangeName, count) => GroupedCount(rangeName, count, total.count)
-    //}
+    val timesVsCounts = logFileReader.resultsHolder.getRequestGeneralStatsBuffers(requestName, group, None).counts
+    val distribution = new GatlingResponseDistribution(timesVsCounts.asJava)
 
     val actualDuration = Duration.ofMillis(logFileReader.runEnd - logFileReader.runStart)
+
     val okRequests = ok.count
     val koRequests = ko.count
 
-    new GatlingResult(okRequests, koRequests, actualDuration, responseTime)
+    new GatlingResult(distribution, okRequests, koRequests, actualDuration, responseTime)
   }
 
   private def generateReport(logFileReader: LogFileReader, runResult: RunResult) = {

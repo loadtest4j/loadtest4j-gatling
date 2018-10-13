@@ -5,7 +5,9 @@ import java.time.Duration
 import org.loadtest4j.driver.DriverResponseTime
 import org.loadtest4j.driver.DriverResult
 
-class GatlingResult(ok: Long, ko: Long, actualDuration: Duration, responseTime: DriverResponseTime) extends DriverResult {
+class GatlingResult(distribution: GatlingResponseDistribution, ok: Long, ko: Long, actualDuration: Duration, responseTime: DriverResponseTime) extends DriverResult {
+  def getDistribution: GatlingResponseDistribution = distribution
+
   override def getKo: Long = ko
 
   override def getOk: Long = ok
