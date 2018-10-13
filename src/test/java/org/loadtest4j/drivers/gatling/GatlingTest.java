@@ -15,6 +15,7 @@ import org.loadtest4j.driver.DriverRequest;
 import org.loadtest4j.driver.DriverResult;
 import scala.concurrent.duration.FiniteDuration;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -68,8 +69,10 @@ public class GatlingTest {
         assertThat(result)
                 .hasKo(0)
                 .hasOkGreaterThan(1)
-                .hasActualDurationGreaterThan(java.time.Duration.ZERO)
-                .hasMaxResponseTimeGreaterThan(java.time.Duration.ZERO);
+                .hasActualDurationGreaterThan(Duration.ZERO)
+                .hasMaxResponseTimeGreaterThan(Duration.ZERO)
+                .hasSamplesInResponseTimeWindow(Duration.ZERO, result.getResponseTime().getPercentile(100));
+
         // And
         VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
     }

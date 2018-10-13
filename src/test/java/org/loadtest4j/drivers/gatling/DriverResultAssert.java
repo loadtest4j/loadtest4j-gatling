@@ -54,4 +54,19 @@ class DriverResultAssert extends AbstractAssert<DriverResultAssert, DriverResult
 
         return this;
     }
+
+    DriverResultAssert hasSamplesInResponseTimeWindow(Duration min, Duration max) {
+        isNotNull();
+
+        // FIXME remove this hack once core API has the right methods
+        final GatlingResult result = (GatlingResult) actual;
+
+
+        if (result.getDistribution().getResponseCountBetween(min, max) < 1) {
+            failWithMessage("Expected there to be at least 1 sample in the response time window %s-%s", min, max);
+        }
+
+        return this;
+    }
+
 }
