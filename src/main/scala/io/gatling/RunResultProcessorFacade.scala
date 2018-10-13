@@ -29,8 +29,8 @@ private[gatling] class RunResultProcessorFacade(implicit configuration: GatlingC
     val ko = logFileReader.requestGeneralStats(requestName, group, Some(KO))
 
     val responseTime = new GatlingResponseTime(total.percentile)
-    val timesVsCounts = logFileReader.resultsHolder.getRequestGeneralStatsBuffers(requestName, group, None).counts
-    val distribution = new GatlingResponseDistribution(timesVsCounts.asJava)
+    val okBuffer = logFileReader.resultsHolder.getRequestGeneralStatsBuffers(requestName, group, Some(OK))
+    val distribution = new GatlingResponseDistribution(okBuffer.counts.asJava)
 
     val actualDuration = Duration.ofMillis(logFileReader.runEnd - logFileReader.runStart)
 

@@ -5,7 +5,7 @@ import scala.collection.JavaConverters._
 
 class GatlingResponseDistribution(timesVsCounts: java.util.Map[Int, Int]) {
 
-  def getResponseCountBetween(min: Duration, max: Duration): Int = {
+  def getOkRequestsBetween(min: Duration, max: Duration): Int = {
     if (min.compareTo(max) > 0) {
       throw new IllegalArgumentException("Max must be greater than min.")
     }

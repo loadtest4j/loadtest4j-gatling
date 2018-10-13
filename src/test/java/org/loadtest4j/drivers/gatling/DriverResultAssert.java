@@ -62,7 +62,7 @@ class DriverResultAssert extends AbstractAssert<DriverResultAssert, DriverResult
         final GatlingResult result = (GatlingResult) actual;
 
 
-        if (result.getDistribution().getResponseCountBetween(min, max) < 1) {
+        if (result.getDistribution().getOkRequestsBetween(min, max) < 1) {
             failWithMessage("Expected there to be at least 1 sample in the response time window %s-%s", min, max);
         }
 

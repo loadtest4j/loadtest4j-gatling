@@ -16,7 +16,7 @@ public class GatlingResponseDistributionTest {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(Collections.singletonMap(500, 2));
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> distribution.getResponseCountBetween(Duration.ofSeconds(1), Duration.ZERO))
+                .isThrownBy(() -> distribution.getOkRequestsBetween(Duration.ofSeconds(1), Duration.ZERO))
                 .withMessage("Max must be greater than min.");
     }
 
@@ -24,7 +24,7 @@ public class GatlingResponseDistributionTest {
     public void testWithEqualMinMax() {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(Collections.singletonMap(1000, 2));
 
-        final long count = distribution.getResponseCountBetween(Duration.ofSeconds(1), Duration.ofSeconds(1));
+        final long count = distribution.getOkRequestsBetween(Duration.ofSeconds(1), Duration.ofSeconds(1));
         assertThat(count).isEqualTo(2);
     }
 
@@ -32,7 +32,7 @@ public class GatlingResponseDistributionTest {
     public void testWithEmptyDistribution() {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(Collections.emptyMap());
 
-        final long count = distribution.getResponseCountBetween(Duration.ZERO, Duration.ofSeconds(1));
+        final long count = distribution.getOkRequestsBetween(Duration.ZERO, Duration.ofSeconds(1));
         assertThat(count).isZero();
     }
 
@@ -40,7 +40,7 @@ public class GatlingResponseDistributionTest {
     public void testWithValueAboveRange() {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(Collections.singletonMap(2001, 1));
 
-        final long count = distribution.getResponseCountBetween(Duration.ofSeconds(1), Duration.ofSeconds(2));
+        final long count = distribution.getOkRequestsBetween(Duration.ofSeconds(1), Duration.ofSeconds(2));
         assertThat(count).isZero();
     }
 
@@ -48,7 +48,7 @@ public class GatlingResponseDistributionTest {
     public void testWithValueBelowRange() {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(Collections.singletonMap(999, 1));
 
-        final long count = distribution.getResponseCountBetween(Duration.ofSeconds(1), Duration.ofSeconds(2));
+        final long count = distribution.getOkRequestsBetween(Duration.ofSeconds(1), Duration.ofSeconds(2));
         assertThat(count).isZero();
     }
 
@@ -56,7 +56,7 @@ public class GatlingResponseDistributionTest {
     public void testMultipleValuesInRange() {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(dualMap(500, 2, 501, 1));
 
-        final long count = distribution.getResponseCountBetween(Duration.ZERO, Duration.ofSeconds(1));
+        final long count = distribution.getOkRequestsBetween(Duration.ZERO, Duration.ofSeconds(1));
         assertThat(count).isEqualTo(3);
     }
 
@@ -64,7 +64,7 @@ public class GatlingResponseDistributionTest {
     public void testValid() {
         final GatlingResponseDistribution distribution = new GatlingResponseDistribution(Collections.singletonMap(500, 2));
 
-        final long count = distribution.getResponseCountBetween(Duration.ZERO, Duration.ofSeconds(1));
+        final long count = distribution.getOkRequestsBetween(Duration.ZERO, Duration.ofSeconds(1));
         assertThat(count).isEqualTo(2);
     }
 
