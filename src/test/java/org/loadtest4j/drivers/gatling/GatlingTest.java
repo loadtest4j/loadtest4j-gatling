@@ -9,12 +9,16 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 import org.loadtest4j.LoadTesterException;
 import org.loadtest4j.driver.Driver;
 import org.loadtest4j.driver.DriverRequest;
 import org.loadtest4j.driver.DriverResult;
 import scala.concurrent.duration.FiniteDuration;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +41,10 @@ public class GatlingTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     private StubServer httpServer = new StubServer();
 
     @Before
@@ -148,6 +156,34 @@ public class GatlingTest {
         VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/"));
         // And
         VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.GET), uri("/pets"));
+    }
+
+    @Test
+    public void testRunWithFileUpload() throws IOException {
+        // Given
+        final Driver driver = sut();
+        // And
+        final Path file = temporaryFolder.newFile("foo.txt").toPath();
+        Files.write(file, Collections.singleton("foo"));
+        // And
+        whenHttp(httpServer)
+                .match(post("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("foo"))
+                .then(status(HttpStatus.OK_200));
+
+        // When
+        final Map<String, String> headers = new ConcurrentHashMap<String, String>() {{
+            put("Accept", "application/json");
+            put("Content-Type", "application/json");
+        }};
+        final List<DriverRequest> requests = Collections.singletonList(DriverRequests.upload("/", file, headers));
+        final DriverResult result = driver.run(requests);
+
+        // Then
+        assertThat(result)
+                .hasOkGreaterThan(1)
+                .hasKo(0);
+        // And
+        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("foo"));
     }
 
     @Test

@@ -1,15 +1,17 @@
 package org.loadtest4j.drivers.gatling
 
+import java.nio.file.Path
 import java.util
 
 import io.gatling.GatlingFacade
 import io.gatling.core.Predef._
-import io.gatling.core.body.{Body, CompositeByteArrayBody}
+import io.gatling.core.body.{RawFileBody => _, _}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.stats.writer.FileDataWriterType
 import io.gatling.http.Predef._
 import org.loadtest4j.LoadTesterException
 import org.loadtest4j.driver.{Driver, DriverRequest, DriverResult}
+
 import scala.collection.JavaConverters
 import scala.concurrent.duration._
 
@@ -49,6 +51,7 @@ private class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int
   }
 
   private def toGatlingRequest(request: DriverRequest) = {
+    val body = gatlingBody(request.getBody)
     val headers = scalaMap(request.getHeaders)
     val method = request.getMethod
     val path = request.getPath
@@ -57,12 +60,12 @@ private class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int
     http("loadtest4j request")
       .httpRequest(method, path)
       .headers(headers)
-      .body(stringBody(request.getBody))
+      .body(body)
       .queryParamMap(queryParams)
   }
 
-  private def stringBody(str: String): Body = {
-    CompositeByteArrayBody(str)
+  private def gatlingBody(body: org.loadtest4j.Body): Body = {
+    body.accept(new GatlingBodyVisitor)
   }
 
   private def runSimulation(simulation: Simulation) = {
@@ -79,5 +82,25 @@ private class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int
 
   private def validateNotEmpty[T](requests: util.Collection[T]): Unit = {
     if (requests.size < 1) throw new LoadTesterException("No requests were specified for the load test.")
+  }
+
+  private class GatlingBodyVisitor extends org.loadtest4j.Body.Visitor[Body] {
+    override def string(str: String): Body = CompositeByteArrayBody(str)
+
+    override def file(path: Path): Body = {
+      val theFile = path.toAbsolutePath.toString
+
+      // TODO remove this
+      // backup exploration plan if this doesn't work
+      // val fileWithCachedBytes = FileWithCachedBytes(theFile, None)
+      // new RawFileBody(fileWithCachedBytes)
+
+      // FIXME RawFileBody does not actually do a "file upload"...
+      // ...what it does is to let a user store a standard HTTP POST body (e.g. JSON) in a file rather than in a string
+      // and then it literally dumps the file contents into the HTTP request and sends it.
+      // It does not wrap it in "multipart form" or "-----Webkit form boundary-----"
+      val rawFileBodies = new RawFileBodies()(configuration)
+      RawFileBody(theFile)(configuration, rawFileBodies)
+    }
   }
 }
