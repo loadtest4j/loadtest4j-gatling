@@ -1,6 +1,7 @@
 package org.loadtest4j.drivers.gatling;
 
 import org.loadtest4j.Body;
+import org.loadtest4j.BodyPart;
 import org.loadtest4j.driver.DriverRequest;
 
 import java.nio.file.Path;
@@ -20,7 +21,13 @@ class DriverRequests {
         return new DriverRequest(Body.string(body), headers, "POST", path, Collections.emptyMap());
     }
 
-    protected static DriverRequest upload(String path, Path file, Map<String, String> headers) {
-        return new DriverRequest(Body.file(file), headers, "POST", path, Collections.emptyMap());
+    protected static DriverRequest uploadMultiPart(String path, Path a, Path b, Map<String, String> headers) {
+        final Body body = Body.parts(BodyPart.file(a), BodyPart.file(b));
+        return new DriverRequest(body, headers, "POST", path, Collections.emptyMap());
+    }
+
+    protected static DriverRequest uploadMultiPart(String path, String a, String b, Map<String, String> headers) {
+        final Body body = Body.parts(BodyPart.string(a), BodyPart.string(b));
+        return new DriverRequest(body, headers, "POST", path, Collections.emptyMap());
     }
 }

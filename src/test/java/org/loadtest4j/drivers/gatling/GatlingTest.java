@@ -45,6 +45,17 @@ public class GatlingTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    private Path createTempFile(String name, String content) {
+        final Path file;
+        try {
+            file = temporaryFolder.newFile(name).toPath();
+            Files.write(file, Collections.singleton(content));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return file;
+    }
+
     private StubServer httpServer = new StubServer();
 
     @Before
@@ -116,7 +127,10 @@ public class GatlingTest {
         final Driver driver = sut();
         // And
         whenHttp(httpServer)
-                .match(post("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"))
+                .match(post("/"),
+                        withHeader("Accept", "application/json"),
+                        withHeader("Content-Type", "application/json"),
+                        withPostBodyContaining("{}"))
                 .then(status(HttpStatus.OK_200));
 
         // When
@@ -132,7 +146,11 @@ public class GatlingTest {
                 .hasOkGreaterThan(1)
                 .hasKo(0);
         // And
-        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("{}"));
+        VerifyHttp.verifyHttp(httpServer).atLeast(1,
+                method(Method.POST), uri("/"),
+                withHeader("Accept", "application/json"),
+                withHeader("Content-Type", "application/json"),
+                withPostBodyContaining("{}"));
     }
 
     @Test
@@ -159,23 +177,24 @@ public class GatlingTest {
     }
 
     @Test
-    public void testRunWithFileUpload() throws IOException {
+    public void testRunWithMultiPartFileUpload() {
         // Given
         final Driver driver = sut();
         // And
-        final Path file = temporaryFolder.newFile("foo.txt").toPath();
-        Files.write(file, Collections.singleton("foo"));
+        final Path foo = createTempFile("foo.txt", "foo");
+        final Path bar = createTempFile("bar.txt", "bar");
         // And
         whenHttp(httpServer)
-                .match(post("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("foo"))
+                .match(post("/"),
+                        withHeader("Authorization", "Bearer abc123"),
+                        MultiPartConditions.withMultipartFormHeader(),
+                        MultiPartConditions.withPostBodyContainingFilePart("foo.txt", "text/plain", "foo"),
+                        MultiPartConditions.withPostBodyContainingFilePart("bar.txt", "text/plain", "bar"))
                 .then(status(HttpStatus.OK_200));
 
         // When
-        final Map<String, String> headers = new ConcurrentHashMap<String, String>() {{
-            put("Accept", "application/json");
-            put("Content-Type", "application/json");
-        }};
-        final List<DriverRequest> requests = Collections.singletonList(DriverRequests.upload("/", file, headers));
+        final Map<String, String> headers = Collections.singletonMap("Authorization", "Bearer abc123");
+        final List<DriverRequest> requests = Collections.singletonList(DriverRequests.uploadMultiPart("/", foo, bar, headers));
         final DriverResult result = driver.run(requests);
 
         // Then
@@ -183,7 +202,45 @@ public class GatlingTest {
                 .hasOkGreaterThan(1)
                 .hasKo(0);
         // And
-        VerifyHttp.verifyHttp(httpServer).atLeast(1, method(Method.POST), uri("/"), withHeader("Accept", "application/json"), withHeader("Content-Type", "application/json"), withPostBodyContaining("foo"));
+        VerifyHttp.verifyHttp(httpServer).atLeast(1,
+                method(Method.POST),
+                uri("/"),
+                withHeader("Authorization", "Bearer abc123"),
+                MultiPartConditions.withMultipartFormHeader(),
+                MultiPartConditions.withPostBodyContainingFilePart("foo.txt", "text/plain", "foo"),
+                MultiPartConditions.withPostBodyContainingFilePart("bar.txt", "text/plain", "bar"));
+    }
+
+    @Test
+    public void testRunWithMultiPartStringUpload() {
+        // Given
+        final Driver driver = sut();
+        // And
+        whenHttp(httpServer)
+                .match(post("/"),
+                        withHeader("Authorization", "Bearer abc123"),
+                        MultiPartConditions.withMultipartFormHeader(),
+                        MultiPartConditions.withPostBodyContainingStringPart("foo"),
+                        MultiPartConditions.withPostBodyContainingStringPart("bar"))
+                .then(status(HttpStatus.OK_200));
+
+        // When
+        final Map<String, String> headers = Collections.singletonMap("Authorization", "Bearer abc123");
+        final List<DriverRequest> requests = Collections.singletonList(DriverRequests.uploadMultiPart("/", "foo", "bar", headers));
+        final DriverResult result = driver.run(requests);
+
+        // Then
+        assertThat(result)
+                .hasOkGreaterThan(1)
+                .hasKo(0);
+        // And
+        VerifyHttp.verifyHttp(httpServer).atLeast(1,
+                method(Method.POST),
+                uri("/"),
+                withHeader("Authorization", "Bearer abc123"),
+                MultiPartConditions.withMultipartFormHeader(),
+                MultiPartConditions.withPostBodyContainingStringPart("foo"),
+                MultiPartConditions.withPostBodyContainingStringPart("bar"));
     }
 
     @Test

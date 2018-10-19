@@ -41,7 +41,7 @@
         <dependency>
             <groupId>org.loadtest4j</groupId>
             <artifactId>loadtest4j</artifactId>
-            <version>0.16.1-SNAPSHOT</version>
+            <version>0.16.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.gatling</groupId>
