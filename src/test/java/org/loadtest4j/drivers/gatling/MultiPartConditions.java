@@ -33,10 +33,10 @@ final class MultiPartConditions {
         });
     }
 
-    static Condition withPostBodyContainingStringPart(String content) {
+    static Condition withPostBodyContainingStringPart(String name, String content) {
         return Condition.custom(call -> {
             final String body = call.getPostBody();
-            return body.contains("Content-Disposition: form-data" +
+            return body.contains("Content-Disposition: form-data; name=\"" + name + "\"" +
                     HTTP_NEW_LINE +
                     HTTP_NEW_LINE +
                     content);

@@ -220,13 +220,13 @@ public class GatlingTest {
                 .match(post("/"),
                         withHeader("Authorization", "Bearer abc123"),
                         MultiPartConditions.withMultipartFormHeader(),
-                        MultiPartConditions.withPostBodyContainingStringPart("foo"),
-                        MultiPartConditions.withPostBodyContainingStringPart("bar"))
+                        MultiPartConditions.withPostBodyContainingStringPart("a", "foo"),
+                        MultiPartConditions.withPostBodyContainingStringPart("b", "bar"))
                 .then(status(HttpStatus.OK_200));
 
         // When
         final Map<String, String> headers = Collections.singletonMap("Authorization", "Bearer abc123");
-        final List<DriverRequest> requests = Collections.singletonList(DriverRequests.uploadMultiPart("/", "foo", "bar", headers));
+        final List<DriverRequest> requests = Collections.singletonList(DriverRequests.uploadMultiPart("/", "a", "foo", "b", "bar", headers));
         final DriverResult result = driver.run(requests);
 
         // Then
@@ -239,8 +239,8 @@ public class GatlingTest {
                 uri("/"),
                 withHeader("Authorization", "Bearer abc123"),
                 MultiPartConditions.withMultipartFormHeader(),
-                MultiPartConditions.withPostBodyContainingStringPart("foo"),
-                MultiPartConditions.withPostBodyContainingStringPart("bar"));
+                MultiPartConditions.withPostBodyContainingStringPart("a", "foo"),
+                MultiPartConditions.withPostBodyContainingStringPart("b", "bar"));
     }
 
     @Test

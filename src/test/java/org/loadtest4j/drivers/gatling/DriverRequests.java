@@ -26,8 +26,8 @@ class DriverRequests {
         return new DriverRequest(body, headers, "POST", path, Collections.emptyMap());
     }
 
-    protected static DriverRequest uploadMultiPart(String path, String a, String b, Map<String, String> headers) {
-        final Body body = Body.parts(BodyPart.string(a), BodyPart.string(b));
+    protected static DriverRequest uploadMultiPart(String path, String a, String aContent, String b, String bContent, Map<String, String> headers) {
+        final Body body = Body.parts(BodyPart.string(a, aContent), BodyPart.string(b, bContent));
         return new DriverRequest(body, headers, "POST", path, Collections.emptyMap());
     }
 }
