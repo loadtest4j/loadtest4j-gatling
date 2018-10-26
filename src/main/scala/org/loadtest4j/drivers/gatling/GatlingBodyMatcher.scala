@@ -7,7 +7,7 @@ import io.gatling.core.config.GatlingConfiguration
 import io.gatling.http.request.BodyPart
 import io.gatling.http.request.builder.HttpRequestBuilder
 import org.loadtest4j
-import org.loadtest4j.drivers.gatling.GatlingBodyMatcher.HttpRequestBuilderTransformer
+import org.loadtest4j.drivers.gatling.CustomTypes.HttpRequestBuilderTransformer
 
 import scala.collection.JavaConverters
 
@@ -26,8 +26,4 @@ class GatlingBodyMatcher(implicit configuration: GatlingConfiguration) extends o
       })
     }
   }
-}
-
-object GatlingBodyMatcher {
-  type HttpRequestBuilderTransformer = HttpRequestBuilder => HttpRequestBuilder
 }
