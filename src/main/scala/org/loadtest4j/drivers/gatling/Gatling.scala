@@ -4,12 +4,13 @@ import java.util
 
 import io.gatling.GatlingFacade
 import io.gatling.core.Predef._
-import io.gatling.core.body.{Body, CompositeByteArrayBody}
+import io.gatling.core.body.{RawFileBody => _}
 import io.gatling.core.config.GatlingConfiguration
 import io.gatling.core.stats.writer.FileDataWriterType
 import io.gatling.http.Predef._
 import org.loadtest4j.LoadTesterException
 import org.loadtest4j.driver.{Driver, DriverRequest, DriverResult}
+
 import scala.collection.JavaConverters
 import scala.concurrent.duration._
 
@@ -49,20 +50,19 @@ private class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int
   }
 
   private def toGatlingRequest(request: DriverRequest) = {
+    val body = request.getBody
     val headers = scalaMap(request.getHeaders)
     val method = request.getMethod
     val path = request.getPath
     val queryParams = scalaMap(request.getQueryParams)
 
-    http("loadtest4j request")
+    val builder = http("loadtest4j request")
       .httpRequest(method, path)
       .headers(headers)
-      .body(stringBody(request.getBody))
       .queryParamMap(queryParams)
-  }
 
-  private def stringBody(str: String): Body = {
-    CompositeByteArrayBody(str)
+    val addBodyToBuilderFunction = body.`match`(new GatlingBodyMatcher)
+    addBodyToBuilderFunction.apply(builder)
   }
 
   private def runSimulation(simulation: Simulation) = {
