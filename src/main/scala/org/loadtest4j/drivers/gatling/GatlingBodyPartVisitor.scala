@@ -8,7 +8,7 @@ import io.gatling.http.request.BodyPart
 import io.gatling.core.Predef._
 import io.gatling.http.Predef.{RawFileBodyPart, StringBodyPart}
 
-class GatlingBodyPartVisitor(implicit configuration: GatlingConfiguration) extends org.loadtest4j.BodyPart.Visitor[BodyPart] {
+class GatlingBodyPartVisitor(implicit configuration: GatlingConfiguration) extends org.loadtest4j.BodyPart.Matcher[BodyPart] {
   override def stringPart(name: String, content: String): BodyPart = StringBodyPart(name, content)
 
   override def filePart(part: Path): BodyPart = {

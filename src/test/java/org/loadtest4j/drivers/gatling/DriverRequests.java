@@ -22,12 +22,12 @@ class DriverRequests {
     }
 
     protected static DriverRequest uploadMultiPart(String path, Path a, Path b, Map<String, String> headers) {
-        final Body body = Body.parts(BodyPart.file(a), BodyPart.file(b));
+        final Body body = Body.multipart(BodyPart.file(a), BodyPart.file(b));
         return new DriverRequest(body, headers, "POST", path, Collections.emptyMap());
     }
 
     protected static DriverRequest uploadMultiPart(String path, String a, String aContent, String b, String bContent, Map<String, String> headers) {
-        final Body body = Body.parts(BodyPart.string(a, aContent), BodyPart.string(b, bContent));
+        final Body body = Body.multipart(BodyPart.string(a, aContent), BodyPart.string(b, bContent));
         return new DriverRequest(body, headers, "POST", path, Collections.emptyMap());
     }
 }
