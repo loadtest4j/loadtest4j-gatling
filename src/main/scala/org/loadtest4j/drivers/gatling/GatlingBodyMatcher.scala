@@ -7,18 +7,18 @@ import io.gatling.core.config.GatlingConfiguration
 import io.gatling.http.request.BodyPart
 import io.gatling.http.request.builder.HttpRequestBuilder
 import org.loadtest4j
-import org.loadtest4j.drivers.gatling.GatlingBodyVisitor.HttpRequestBuilderTransformer
+import org.loadtest4j.drivers.gatling.GatlingBodyMatcher.HttpRequestBuilderTransformer
 
 import scala.collection.JavaConverters
 
-class GatlingBodyVisitor(implicit configuration: GatlingConfiguration) extends org.loadtest4j.Body.Matcher[HttpRequestBuilderTransformer] {
+class GatlingBodyMatcher(implicit configuration: GatlingConfiguration) extends org.loadtest4j.Body.Matcher[HttpRequestBuilderTransformer] {
   override def string(str: String): HttpRequestBuilderTransformer = {
     val gatlingBody = CompositeByteArrayBody(str)
     builder => builder.body(gatlingBody)
   }
 
   override def multipart(body: util.List[loadtest4j.BodyPart]): HttpRequestBuilderTransformer = {
-    val gatlingBodyParts = JavaConverters.asScalaBuffer(body).map(bp => bp.`match`(new GatlingBodyPartVisitor()))
+    val gatlingBodyParts = JavaConverters.asScalaBuffer(body).map(bp => bp.`match`(new GatlingBodyPartMatcher()))
 
     builder => {
       gatlingBodyParts.foldLeft(builder)((accumulatingBuilder: HttpRequestBuilder, gatlingBodyPart: BodyPart) => {
@@ -28,6 +28,6 @@ class GatlingBodyVisitor(implicit configuration: GatlingConfiguration) extends o
   }
 }
 
-object GatlingBodyVisitor {
+object GatlingBodyMatcher {
   type HttpRequestBuilderTransformer = HttpRequestBuilder => HttpRequestBuilder
 }

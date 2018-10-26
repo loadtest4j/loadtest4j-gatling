@@ -61,7 +61,7 @@ private class Gatling(duration: FiniteDuration, url: String, usersPerSecond: Int
       .headers(headers)
       .queryParamMap(queryParams)
 
-    val addBodyToBuilderFunction = body.`match`(new GatlingBodyVisitor)
+    val addBodyToBuilderFunction = body.`match`(new GatlingBodyMatcher)
     addBodyToBuilderFunction.apply(builder)
   }
 
