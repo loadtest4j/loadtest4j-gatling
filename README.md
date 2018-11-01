@@ -8,7 +8,9 @@ A Gatling driver for loadtest4j.
 
 ## Setup
 
-1. **Add the library** to your `pom.xml`:
+1. **Open your Web service project** or make a new project.
+
+2. **Add the library** to your project:
 
     ```xml
     <dependency>
@@ -18,7 +20,7 @@ A Gatling driver for loadtest4j.
     </dependency>
     ```
 
-2. **Configure the driver** in `src/test/resources/loadtest4j.properties`:
+3. **Configure the driver** in `src/test/resources/loadtest4j.properties`:
     
     ```properties
     loadtest4j.driver.duration = 10
@@ -26,9 +28,9 @@ A Gatling driver for loadtest4j.
     loadtest4j.driver.usersPerSecond = 1
     ```
 
-3. **Optional: Add advanced Gatling configuration** in `src/test/resources/gatling.conf`.
+4. **Optional: Add advanced Gatling configuration** in `src/test/resources/gatling.conf`.
 
-4. **Write your load tests** using the standard [LoadTester API](https://github.com/loadtest4j/loadtest4j).
+5. **Write your load tests** using the standard [LoadTester API](https://github.com/loadtest4j/loadtest4j).
 
 ## Control Gatling logging
 
