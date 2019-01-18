@@ -15,51 +15,51 @@ public class GatlingBuilderTest {
 
     @Test
     public void shouldRequireUrl() {
-        final Gatling gatling = (Gatling) builder.build();
+        final Gatling gatling = builder.buildDriver();
 
         assertThat(gatling).hasFieldOrPropertyWithValue("url", "https://example.com");
     }
 
     @Test
     public void shouldSetDuration() {
-        final Gatling gatling = (Gatling) builder
+        final Gatling gatling = builder
                 .withDuration(Duration.ofSeconds(2))
-                .build();
+                .buildDriver();
 
         assertThat(gatling).hasFieldOrPropertyWithValue("duration", FiniteDuration.create(2, TimeUnit.SECONDS));
     }
 
     @Test
     public void shouldSetDurationTo1SecondByDefault() {
-        final Gatling gatling = (Gatling) builder.build();
+        final Gatling gatling = builder.buildDriver();
 
         assertThat(gatling).hasFieldOrPropertyWithValue("duration", FiniteDuration.create(1, TimeUnit.SECONDS));
     }
 
     @Test
     public void shouldSetUsersPerSecond() {
-        final Gatling gatling = (Gatling) builder
+        final Gatling gatling = builder
                 .withUsersPerSecond(2)
-                .build();
+                .buildDriver();
 
         assertThat(gatling).hasFieldOrPropertyWithValue("usersPerSecond", 2);
     }
 
     @Test
     public void shouldSetUsersPerSecondTo1ByDefault() {
-        final Gatling gatling = (Gatling) builder.build();
+        final Gatling gatling = builder.buildDriver();
 
         assertThat(gatling).hasFieldOrPropertyWithValue("usersPerSecond", 1);
     }
 
     @Test
     public void shouldBeImmutable() {
-        final Driver before = builder.build();
+        final Driver before = builder.buildDriver();
 
         builder.withDuration(Duration.ofSeconds(2));
         builder.withUsersPerSecond(2);
 
-        final Driver after = builder.build();
+        final Driver after = builder.buildDriver();
 
         assertThat(after).isEqualToComparingFieldByField(before);
     }

@@ -1,11 +1,11 @@
 package org.loadtest4j.drivers.gatling;
 
-import org.loadtest4j.driver.Driver;
+import org.loadtest4j.factory.LoadTesterBuilder;
 import scala.concurrent.duration.FiniteDuration;
 
 import java.time.Duration;
 
-public class GatlingBuilder {
+public class GatlingBuilder extends LoadTesterBuilder {
 
     private final Duration duration;
     private final String url;
@@ -29,7 +29,8 @@ public class GatlingBuilder {
         return new GatlingBuilder(duration, url, usersPerSecond);
     }
 
-    public Driver build() {
+    @Override
+    protected Gatling buildDriver() {
         final FiniteDuration d = asScalaDuration(duration);
         return new Gatling(d, url, usersPerSecond);
     }
