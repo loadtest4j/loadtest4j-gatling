@@ -4,33 +4,77 @@
 [![Codecov](https://codecov.io/gh/loadtest4j/loadtest4j-gatling/branch/master/graph/badge.svg)](https://codecov.io/gh/loadtest4j/loadtest4j-gatling)
 [![Maven Central](https://img.shields.io/maven-central/v/org.loadtest4j.drivers/loadtest4j-gatling.svg)](http://repo2.maven.org/maven2/org/loadtest4j/drivers/loadtest4j-gatling/)
 
-A Gatling driver for loadtest4j.
+Gatling driver for [loadtest4j](https://www.loadtest4j.org).
 
-## Setup
+## Usage
 
-1. **Open your Web service project** or make a new project.
+With a new or existing Maven project open in your favorite editor...
 
-2. **Add the library** to your project:
+### 1. Add the library
 
-    ```xml
-    <dependency>
-        <groupId>org.loadtest4j.drivers</groupId>
-        <artifactId>loadtest4j-gatling</artifactId>
-        <scope>test</scope>
-    </dependency>
-    ```
+Add the library to your Maven project POM.
 
-3. **Configure the driver** in `src/test/resources/loadtest4j.properties`:
-    
-    ```properties
-    loadtest4j.driver.duration = 10
-    loadtest4j.driver.url = https://example.com
-    loadtest4j.driver.usersPerSecond = 1
-    ```
+```xml
+<dependency>
+    <groupId>org.loadtest4j.drivers</groupId>
+    <artifactId>loadtest4j-gatling</artifactId>
+    <scope>test</scope>
+</dependency>
+```
 
-4. **Optional: Add advanced Gatling configuration** in `src/test/resources/gatling.conf`.
+### 2. Create the load tester
 
-5. **Write your load tests** using the standard [LoadTester API](https://github.com/loadtest4j/loadtest4j).
+Use **either** the Factory **or** the Builder.
+
+#### Factory
+
+```java
+LoadTester loadTester = LoadTesterFactory.getLoadTester();
+```
+
+```properties
+# src/test/resources/loadtest4j.properties
+
+loadtest4j.driver.duration = 60
+loadtest4j.driver.url = https://example.com
+loadtest4j.driver.usersPerSecond = 1
+```
+
+#### Builder
+
+```java
+LoadTester loadTester = GatlingBuilder.withUrl("https://example.com")
+                                      .withDuration(Duration.ofSeconds(60))
+                                      .withUsersPerSecond(1)
+                                      .build();
+```
+
+### 3. Write load tests
+
+Write load tests with your favorite language, test framework, and assertions. See the [loadtest4j documentation](https://www.loadtest4j.org) for further instructions.
+
+```java
+public class PetStoreLT {
+
+    private static final LoadTester loadTester = /* see step 2 */ ;
+
+    @Test
+    public void shouldFindPets() {
+        List<Request> requests = List.of(Request.get("/pet/findByStatus")
+                                                .withHeader("Accept", "application/json")
+                                                .withQueryParam("status", "available"));
+
+        Result result = loadTester.run(requests);
+
+        assertThat(result.getResponseTime().getPercentile(90))
+            .isLessThanOrEqualTo(Duration.ofMillis(500));
+    }
+}
+```
+
+## Advanced Gatling configuration
+
+All advanced Gatling configuration can be specified in the usual [`gatling.conf`](https://github.com/gatling/gatling/blob/master/gatling-core/src/main/resources/gatling-defaults.conf) format. Create `src/test/resources/gatling.conf` and place configuration overrides in there.
 
 ## Control Gatling logging
 
